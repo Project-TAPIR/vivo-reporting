@@ -41,7 +41,7 @@
         <mat-label>Name</mat-label>
         <input formControlName="name" matInput placeholder="Enter model name" />
         <mat-error *ngIf="modelForm.controls['name'].invalid">
-          {{ getErrorMessage() }}
+          {{ getErrorMessage('name') }}
         </mat-error>
       </mat-form-field>
     </div>
@@ -56,6 +56,9 @@
     <div class="form-group">
         <mat-label>Query:</mat-label>
         <app-sparql-editor-area formControlName="constructQuery" />
+        <mat-error *ngIf="modelForm.controls['constructQuery'].invalid">
+          {{ getErrorMessage('constructQuery') }}
+        </mat-error>
     </div>
 
     <div class="button-group">

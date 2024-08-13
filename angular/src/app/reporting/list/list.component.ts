@@ -58,7 +58,12 @@ export class ListComponent implements OnInit, AfterViewInit {
   }
 
   confirmDelete(resourceId: string) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete report?`
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

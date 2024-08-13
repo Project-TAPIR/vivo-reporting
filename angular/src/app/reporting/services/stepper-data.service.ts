@@ -20,6 +20,11 @@ export class StepperDataService {
     return this.report.construct_queries || [];
   }
 
+  public removeSelectsByConstruct(constructName: string) {
+    const updatedSelects = this.getSelectForm().filter(select => select.graph !== constructName);
+    this.setSelectForm(updatedSelects);
+  }
+
   public setSelectForm(selects: Select[]) {
     this.report = { ...this.report, select_queries: selects };
     this.dataChange.next(this.report);

@@ -24,7 +24,6 @@ export class ReportService {
       report_generator_name: params.report_generator_name
     };
 
-    console.log('Body with vivoweb ontology: ' + JSON.stringify(body));
     return this.http.post(
       this.getBaseUrl(),
       body,
@@ -36,7 +35,6 @@ export class ReportService {
   }
 
   delete(id: string) {
-    console.log('Delete from report service\n');
     return this.http.delete(this.getBaseUrl() + `/resource:${id}`);
   }
 
@@ -83,6 +81,7 @@ export class ReportService {
       body,
     );
   }
+
   getBaseUrl() {
      return window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1] + '/api/rest/1/report_generator';
   }

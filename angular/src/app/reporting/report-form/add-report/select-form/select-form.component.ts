@@ -4,6 +4,8 @@ import { StepperDataService } from 'src/app/reporting/services/stepper-data.serv
 import { Subscription } from 'rxjs';
 import {Select} from "../../../models/select";
 import {MatTableDataSource} from "@angular/material/table";
+import {MatDialog} from "@angular/material/dialog";
+import {ConfirmDialogComponent} from "../../../common/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'report-select-form',
@@ -20,11 +22,15 @@ export class SelectFormComponent implements OnInit {
   dataSource = new MatTableDataSource<any>([]);
   private subscription!: Subscription;
   selects: Select[] = [];
+
+  private tempSelect: any;
+
   @Output() selectAdded = new EventEmitter<Select[]>();
   @Output() public toggleControler = new EventEmitter<boolean>();
 
   constructor(private formBuilder: FormBuilder,
-              private stepperDataService: StepperDataService) { }
+              private stepperDataService: StepperDataService,
+              private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.selectQueryForm = this.formBuilder.group({
@@ -41,7 +47,7 @@ export class SelectFormComponent implements OnInit {
   subscribe(): void {
     this.subscription = this.stepperDataService.getData().subscribe((data: any) => {
       this.array = this.stepperDataService.getConstructForm();
-      console.log('data criteria form: ', this.array);
+      this.dataSource.data = this.stepperDataService.getSelectForm();
     })
   }
 
@@ -50,18 +56,32 @@ export class SelectFormComponent implements OnInit {
   }
 
   remove(name: string) {
-    this.selects = this.selects.filter((r) => r.name !== name);
-    this.dataSource.data = this.dataSource.data.filter((r) => r.name !== name);
-    this.stepperDataService.setSelectForm(this.selects);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete the select ${name}?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.selects = this.selects.filter((r) => r.name !== name);
+        this.dataSource.data = this.dataSource.data.filter((r) => r.name !== name);
+        this.stepperDataService.setSelectForm(this.selects);
+      }
+    })
   }
 
   edit(name: string) {
     this.toggleInstructions(this.toggleOn);
-    let object = this.dataSource.data.filter((r) => r.name === name);
-    this.dataSource.data.splice(this.dataSource.data.indexOf(object[0]), 1)
-    this.selectQueryForm.reset();
-    this.selectQueryForm.setValue(object[0]);
-    this.edited = true;
+    let object = this.dataSource.data.find((r) => r.name === name);
+
+    if (object) {
+      this.tempSelect = { ...object };
+      this.selectQueryForm.setValue(object);
+      this.edited = true;
+    }
+
   }
 
   onSubmit() {
@@ -69,20 +89,45 @@ export class SelectFormComponent implements OnInit {
       return;
     }
 
-    if (!this.dataSource.data.find((row) => row.name === this.selectQueryForm.controls['name'].value)) {
-      this.dataSource.data.push(this.selectQueryForm.value);
-      this.selects.push(this.selectQueryForm.value);
-      this.stepperDataService.setSelectForm(this.selects);
-      this.toggleInstructions(this.toggleOn);
-      this.selectQueryForm.reset();
+    const newSelect = this.selectQueryForm.value;
+
+    const existingIndex = this.tempSelect
+      ? this.dataSource.data.findIndex((row) => row.name === this.tempSelect.name)
+      : -1;
+
+    if (existingIndex !== -1) {
+      this.dataSource.data[existingIndex] = this.selectQueryForm.value;
+      this.selects[existingIndex] = this.selectQueryForm.value;
     } else {
-      alert("Name should be unique (already exists in table)");
+      this.dataSource.data = [...this.dataSource.data, newSelect];
+      this.selects = [...this.selects, newSelect];
     }
+
+    this.tempSelect = null;
+    this.stepperDataService.setSelectForm(this.selects);
+    this.toggleInstructions(this.toggleOn);
+    this.selectQueryForm.reset();
   }
 
   toggleInstructions(event: any) {
     this.toggleOn = !this.toggleOn;
     this.toggleControler.emit(!this.toggleOn);
+
+    if (!this.toggleOn && this.tempSelect) {
+      const existingIndex = this.dataSource.data.findIndex(
+        (row) => row.name === this.tempSelect.name
+      );
+
+      if (existingIndex === -1) {
+        this.dataSource.data.push(this.tempSelect);
+      }
+
+      this.tempSelect = null;
+    }
+
+    this.selectQueryForm.reset({
+      description: ''
+    });
   }
 
 }
