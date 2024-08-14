@@ -8,6 +8,9 @@ import {UpdReport} from "../models/updReport";
 import {ConfirmDialogComponent} from "../common/confirm-dialog/confirm-dialog.component";
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import * as JSZip from "jszip";
+import mime from 'mime';
+import {SUPPPORTED_CONTENT_TYPES} from "../models/SupportedContentTypes";
 
 interface ApiResponse {
   reports: UpdReport[];
@@ -107,22 +110,39 @@ export class ListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  downloadReport(resourceId: string) {
-    this.reportService.execute(resourceId).subscribe((response) => {
+  async downloadReport(resourceId: string) {
+    this.reportService.execute(resourceId).subscribe(async (response) => {
       const base64Data = response.report;
-      const blob = this.base64ToBlob(base64Data, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'report.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      const blob = this.base64ToBlob(base64Data);
+      const contentType = await this.getConentTypeFromZip(blob) as string;
+      this.triggerDownload(blob, `report.${mime.getExtension(contentType)}`)
     });
   }
 
-  base64ToBlob(base64: string, contentType: string) {
+  downloadConfig(resourceId: string) {
+    this.reportService.export(resourceId).subscribe((response) => {
+      const configGraph = response.report_generator_configuration_graph;
+      const contentType = mime.getType('n3') as string;
+      const blob = new Blob([configGraph], {type: contentType});
+      this.triggerDownload(blob, `config.${mime.getExtension(contentType)}`)
+    })
+  }
+
+  async getConentTypeFromZip(file: Blob) {
+    const zip = new JSZip();
+    const content = await zip.loadAsync(file);
+    const contentTypesFile = content.files['[Content_Types].xml'];
+    const xmlText = await contentTypesFile.async('text');
+    if (xmlText.includes(mime.getType(SUPPPORTED_CONTENT_TYPES.Docx) as string)) {
+      return SUPPPORTED_CONTENT_TYPES.Docx;
+    }
+    if (xmlText.includes(mime.getType(SUPPPORTED_CONTENT_TYPES.Xlsx) as string)) {
+      return SUPPPORTED_CONTENT_TYPES.Xlsx;
+    }
+    else return SUPPPORTED_CONTENT_TYPES.Zip;
+  }
+
+  base64ToBlob(base64: string) {
     const byteCharacters = atob(base64);
     const byteArrays = [];
 
@@ -138,23 +158,18 @@ export class ListComponent implements OnInit, AfterViewInit {
       byteArrays.push(byteArray);
     }
 
-    return new Blob(byteArrays, { type: contentType });
+    return new Blob(byteArrays);
   }
 
-  downloadConfig(resourceId: string) {
-    this.reportService.export(resourceId).subscribe((response) => {
-      const configGraph = response.report_generator_configuration_graph;
-      const blob = new Blob([configGraph], {type: 'text/plain'});
-      const a = document.createElement('a');
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = 'config.txt';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      console.log(response);
-    })
+  triggerDownload(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 
   highlight(row: any) {
