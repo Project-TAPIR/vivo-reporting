@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StepperDataService} from "../../../services/stepper-data.service";
 import {Report} from "../../../models/report";
 import {Select} from "../../../models/select";
@@ -24,6 +24,7 @@ export class ExportFormComponent implements OnInit {
   public constructColumns: string[] = ['name', 'description', 'constructQuery'];
   public selectColumns: string[] = ['name', 'description', 'selectQuery', 'construct'];
 
+  @Input() showGraph = true;
   @Output() reportNameChange = new EventEmitter<string>();
   @Output() reportDescriptionChange = new EventEmitter<string>();
 
@@ -41,7 +42,9 @@ export class ExportFormComponent implements OnInit {
         name: report.report_generator_name,
         description: report.report_generator_description
       });
-      this.constructQueries = report.construct_queries || [];
+
+      this.selectColumns.splice(3, 1);
+      this.constructQueries = this.showGraph ? report.construct_queries : [];
       this.selectQueries = report.select_queries || [];
       this.template = report.template || '';
       this.loadTemplateData(report.template);

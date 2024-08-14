@@ -1,4 +1,5 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -6,6 +7,15 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  @ViewChild('editor', { static: true }) editor!: ElementRef;
+
+  constructor(private router: Router) {}
+
+  startReport() {
+    this.router.navigate(['/add'], { queryParams: { includeConstruct: true } });
+  }
+
+  startReportWithoutConstruct() {
+    this.router.navigate(['/add'], { queryParams: { includeConstruct: false } });
+  }
 
 }

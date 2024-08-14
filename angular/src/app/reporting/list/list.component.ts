@@ -11,6 +11,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import * as JSZip from "jszip";
 import mime from 'mime';
 import {SUPPPORTED_CONTENT_TYPES} from "../models/SupportedContentTypes";
+import {Router} from "@angular/router";
 
 interface ApiResponse {
   reports: UpdReport[];
@@ -32,7 +33,8 @@ export class ListComponent implements OnInit, AfterViewInit {
 
   constructor(private reportService: ReportService,
               private dialog: MatDialog,
-              private snackBar: MatSnackBar) {}
+              private snackBar: MatSnackBar,
+              private router: Router) {}
 
   ngOnInit(): void {
     this.getData();
@@ -47,6 +49,14 @@ export class ListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+  }
+
+  startReport() {
+    this.router.navigate(['/add'], { queryParams: { includeConstruct: true } });
+  }
+
+  startReportWithoutConstruct() {
+    this.router.navigate(['/add'], { queryParams: { includeConstruct: false } });
   }
 
   deleteReport(resourceId: string) {

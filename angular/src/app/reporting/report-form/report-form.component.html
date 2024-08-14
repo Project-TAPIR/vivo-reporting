@@ -5,14 +5,14 @@
         <mat-sidenav-content>
 
         <mat-horizontal-stepper #stepper (selectionChange)="onStepChange($event)" (click)="triggerClick()">
-          <mat-step label="Model definition" errorMessage="Required">
+          <mat-step label="Model definition" errorMessage="Required" *ngIf="includeConstructStep">
             <report-construct-form (toggleControler)="hideStepperButtons($event)"></report-construct-form>
             <div class="stepper-navigation" *ngIf="this.isButtonVisible">
               <button mat-stroked-button color="primary" matStepperNext>Next</button>
             </div>
           </mat-step>
           <mat-step label="Select from model">
-            <report-select-form (toggleControler)="hideStepperButtons($event)"></report-select-form>
+            <report-select-form [showGraph]="includeConstructStep" (toggleControler)="hideStepperButtons($event)"></report-select-form>
             <div class="stepper-navigation" *ngIf="this.isButtonVisible">
               <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
               <button mat-stroked-button color="primary" matStepperNext>Next</button>
@@ -27,6 +27,7 @@
           </mat-step>
           <mat-step label="Export">
             <report-export-form
+              [showGraph]="includeConstructStep"
               (reportNameChange)="updateReportName($event)"
               (reportDescriptionChange)="updateReportDescription($event)"
             ></report-export-form>

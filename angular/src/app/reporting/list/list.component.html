@@ -47,7 +47,11 @@
       </table>
       <br>
       <div class="button-container">
-        <button mat-raised-button color="primary" [routerLink]="'/add'">New report</button>
+        <mat-menu #reportMenu="matMenu">
+          <button mat-menu-item (click)="startReport()">Add report with construct</button>
+          <button mat-menu-item (click)="startReportWithoutConstruct()">Add report with only select</button>
+        </mat-menu>
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="reportMenu" >New report</button>
         <button mat-raised-button color="primary" (click)="fileInput.click()">Import config</button>
       </div>
       <input type="file" style="display: none" #fileInput (change)="onFileSelected($event)">

@@ -12,7 +12,7 @@
         <td mat-cell *matCellDef="let element">{{element.description}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="graph">
+      <ng-container matColumnDef="graph" *ngIf="showGraph">
         <th mat-header-cell *matHeaderCellDef>Graph</th>
         <td mat-cell *matCellDef="let element">{{element.graph}}</td>
       </ng-container>
@@ -63,7 +63,7 @@
             query</mat-error>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" *ngIf="showGraph">
         <mat-form-field appearance="fill">
           <mat-label>Graph</mat-label>
           <mat-select formControlName="graph">

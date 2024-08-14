@@ -7,6 +7,6 @@ export class Report {
     report_generator_name!: string;
     report_generator_description!: string;
     template!: string;
-    construct_queries!: Construct[];
+    construct_queries: Construct[] = [];
     select_queries!: Select[];
 }

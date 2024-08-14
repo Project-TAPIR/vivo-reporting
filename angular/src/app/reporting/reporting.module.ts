@@ -21,6 +21,7 @@ import {CodeEditor} from "@acrodata/code-editor";
 
 import {SparqlEditorAreaComponent} from "./common/sparql-editor-area/sparql-editor-area.component";
 import {MatTooltip} from "@angular/material/tooltip";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -37,16 +38,19 @@ import {MatTooltip} from "@angular/material/tooltip";
     FaqComponent,
     MenuComponent
   ],
-    imports: [
-        CommonModule,
-        MaterialModule,
-        ReactiveFormsModule,
-        SubsetsRoutingModule,
-        FormsModule,
-        CodeEditor,
-        SparqlEditorAreaComponent,
-        MatTooltip
-    ],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    SubsetsRoutingModule,
+    FormsModule,
+    CodeEditor,
+    SparqlEditorAreaComponent,
+    MatTooltip,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger
+  ],
 })
 export class ReportingModule {
 }

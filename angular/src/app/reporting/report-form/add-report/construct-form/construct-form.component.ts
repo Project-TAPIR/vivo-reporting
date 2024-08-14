@@ -1,5 +1,5 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { StepperDataService } from 'src/app/reporting/services/stepper-data.service';
 import {Construct} from "../../../models/construct";
@@ -22,6 +22,7 @@ export class ConstructFormComponent implements OnInit {
 
   private tempConstruct: any;
 
+  @Input() showStep = true;
   @Output() constructAdded = new EventEmitter<Construct[]>();
   @Output() public toggleControler = new EventEmitter<boolean>();
 
@@ -38,6 +39,7 @@ export class ConstructFormComponent implements OnInit {
       constructQuery: ['', Validators.required],
     },
       {updateOn: "blur"})
+
   }
 
   highlight(row: any) {

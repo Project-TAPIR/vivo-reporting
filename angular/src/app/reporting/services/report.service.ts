@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Report } from '../models/report';
 import { Injectable } from '@angular/core';
 import {ApiResponse} from "../models/apiresponse";
@@ -19,7 +19,7 @@ export class ReportService {
     let body = {
       template: params.template,
       select_queries: params.select_queries,
-      construct_queries: params.construct_queries,
+      construct_queries: params.construct_queries || [],
       report_generator_description: params.report_generator_description,
       report_generator_name: params.report_generator_name
     };

@@ -1,5 +1,5 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { StepperDataService } from 'src/app/reporting/services/stepper-data.service';
 import { Subscription } from 'rxjs';
 import {Select} from "../../../models/select";
@@ -17,7 +17,7 @@ export class SelectFormComponent implements OnInit {
   array!: any[];
   toggleOn!: boolean;
   edited!: boolean;
-  displayedColumns: string[] = ['name', 'description', 'graph','action'];
+  displayedColumns: string[] = ['name', 'description', 'graph','action'] ;
   selectedRowIndex = -1;
   dataSource = new MatTableDataSource<any>([]);
   private subscription!: Subscription;
@@ -25,6 +25,7 @@ export class SelectFormComponent implements OnInit {
 
   private tempSelect: any;
 
+  @Input() showGraph = true;
   @Output() selectAdded = new EventEmitter<Select[]>();
   @Output() public toggleControler = new EventEmitter<boolean>();
 
@@ -40,6 +41,10 @@ export class SelectFormComponent implements OnInit {
           graph: [''],
     },
     {updateOn: "blur"})
+
+    if (!this.showGraph) {
+      this.displayedColumns.splice(2, 1);
+    }
 
     this.subscribe();
   }
@@ -126,7 +131,8 @@ export class SelectFormComponent implements OnInit {
     }
 
     this.selectQueryForm.reset({
-      description: ''
+      description: '',
+      graph: 'https://vivoweb.org/ontology/vitro-dynamic-api/model/full_union'
     });
   }
 

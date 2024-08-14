@@ -1,5 +1,5 @@
 <div class="review-container">
-  <form [formGroup]="exportForm" class="add-form" required>
+  <form [formGroup]="exportForm" class="add-form">
     <mat-card>
       <mat-card-header>
         <mat-card-title>Report Details</mat-card-title>
@@ -70,7 +70,7 @@
               <mat-cell *matCellDef="let element">{{ element.selectQuery }}</mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="construct">
+            <ng-container matColumnDef="construct" *ngIf="showGraph">
               <mat-header-cell *matHeaderCellDef>Related Construct</mat-header-cell>
               <mat-cell *matCellDef="let element">{{ element.graph }}</mat-cell>
             </ng-container>

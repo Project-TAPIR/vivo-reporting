@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ConstructFormComponent} from './add-report/construct-form/construct-form.component';
 import {ExportFormComponent} from './add-report/export-form/export-form.component';
 import {TemplateFormComponent} from './add-report/template-form/template-form.component';
@@ -16,7 +16,6 @@ import {STEPPER_GLOBAL_OPTIONS} from "@angular/cdk/stepper";
 const CONSTRUCT_INDEX: number = 0;
 const SELECT_INDEX: number = 1;
 const TEMPLATE_INDEX: number = 2;
-const EXPORT_INDEX: number = 3;
 
 @Component({
   selector: 'app-report-form',
@@ -29,16 +28,18 @@ const EXPORT_INDEX: number = 3;
     }
   ]
 })
-export class ReportFormComponent implements AfterViewInit {
-  currentStepIndex: number = 0;
+export class ReportFormComponent implements OnInit, AfterViewInit {
   subsetFormSubscription!: Subscription;
   allFormsValid: boolean = false;
+  currentStepIndex: number = 0;
   report: Report = {} as Report;
   constructs: Construct[] = {} as Construct[];
   selects: Select[] = {} as Select[];
   template: string = "" as string;
   isButtonVisible = true;
   response!: any[];
+  includeConstructStep: boolean = true;
+
 
   @ViewChild(ConstructFormComponent)
   subsetComponent!: ConstructFormComponent;
@@ -54,6 +55,13 @@ export class ReportFormComponent implements AfterViewInit {
               private stepperDataService: StepperDataService,
               private router: Router,
               private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.includeConstructStep = params['includeConstruct'] !== 'false';
+    });
+  }
+
   ngAfterViewInit() {
     this.handleSubscriptions();
   }
@@ -114,24 +122,40 @@ export class ReportFormComponent implements AfterViewInit {
     let previousIndex: number = event.previouslySelectedIndex;
     this.currentStepIndex = event.selectedIndex;
 
-    if (previousIndex == CONSTRUCT_INDEX) {
-      this.constructs = this.stepperDataService.getConstructForm()
-      console.log('SUBSET_INDEX: \n' + JSON.stringify(this.constructs));
-      this.handleConstructAdded(this.constructs);
-    }
-    else if (previousIndex == SELECT_INDEX) {
-      this.selects = this.stepperDataService.getSelectForm();
-      console.log('CRITERIA_INDEX');
-      this.handleSelectAdded(this.selects)
-    }
-    else if (previousIndex == TEMPLATE_INDEX) {
-      this.template = this.stepperDataService.getTemplateForm();
-      if (this.template === "") {
-        alert("Your template is empty");
+    if (this.includeConstructStep) {
+      if (previousIndex == CONSTRUCT_INDEX) {
+        this.constructs = this.stepperDataService.getConstructForm()
+        console.log('SUBSET_INDEX: \n' + JSON.stringify(this.constructs));
+        this.handleConstructAdded(this.constructs);
       }
-      console.log('TEMPLATE_INDEX: \n' + this.template);
+      else if (previousIndex == SELECT_INDEX) {
+        this.selects = this.stepperDataService.getSelectForm();
+        console.log('CRITERIA_INDEX');
+        this.handleSelectAdded(this.selects)
+      }
+      else if (previousIndex == TEMPLATE_INDEX) {
+        this.template = this.stepperDataService.getTemplateForm();
+        if (this.template === "") {
+          alert("Your template is empty");
+        }
+        console.log('TEMPLATE_INDEX: \n' + this.template);
+      }
+    } else {
+      if (previousIndex == CONSTRUCT_INDEX) {
+        this.selects = this.stepperDataService.getSelectForm();
+        console.log('CRITERIA_INDEX');
+        this.handleSelectAdded(this.selects)
+      }
+      else if (previousIndex == SELECT_INDEX) {
+        this.template = this.stepperDataService.getTemplateForm();
+        if (this.template === "") {
+          alert("Your template is empty");
+        }
+        console.log('TEMPLATE_INDEX: \n' + this.template);
+      }
     }
   }
+
 
   isCurrentStep(stepIndex: number): boolean {
     return this.currentStepIndex === stepIndex;
@@ -148,7 +172,6 @@ export class ReportFormComponent implements AfterViewInit {
     this.reportService.create(this.report)
       .pipe(first())
       .subscribe(data => {
-        let result :string[] = []
         this.router.navigate(['../list'], { relativeTo: this.route});
       });
   }
@@ -173,11 +196,4 @@ export class ReportFormComponent implements AfterViewInit {
     console.log("Selected index: ", this.currentStepIndex);
   }
 
-  onNext(stepper: MatStepper) {
-    console.log('test');
-    this.stepperDataService.getData().subscribe(data => {
-      console.log('this.data from next(): ', this.response);
-    })
-    stepper.next();
-  }
 }

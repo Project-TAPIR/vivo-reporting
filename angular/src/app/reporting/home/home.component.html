@@ -19,7 +19,13 @@
           </div>
 
           <div class="actions">
-            <button mat-raised-button color="primary" routerLink="/add">Create New Report</button>
+            <div class="button-container">
+              <mat-menu #reportMenu="matMenu">
+                <button mat-menu-item (click)="startReport()">Add report with construct</button>
+                <button mat-menu-item (click)="startReportWithoutConstruct()">Add report with only select</button>
+              </mat-menu>
+            </div>
+              <button mat-raised-button color="primary" [matMenuTriggerFor]="reportMenu" >New report</button>
             <button mat-raised-button color="accent" routerLink="/list">View Existing Reports</button>
           </div>
         </div>
