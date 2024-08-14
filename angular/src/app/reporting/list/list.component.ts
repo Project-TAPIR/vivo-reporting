@@ -114,21 +114,21 @@ export class ListComponent implements OnInit, AfterViewInit {
     this.reportService.execute(resourceId).subscribe(async (response) => {
       const base64Data = response.report;
       const blob = this.base64ToBlob(base64Data);
-      const contentType = await this.getConentTypeFromZip(blob) as string;
-      this.triggerDownload(blob, `report.${mime.getExtension(contentType)}`)
+      const contentType = await this.getContentTypeFromZip(blob);
+      this.triggerDownload(blob, `report.${contentType}`)
     });
   }
 
   downloadConfig(resourceId: string) {
     this.reportService.export(resourceId).subscribe((response) => {
       const configGraph = response.report_generator_configuration_graph;
-      const contentType = mime.getType('n3') as string;
+      const contentType = mime.getType(SUPPPORTED_CONTENT_TYPES.N3) as string;
       const blob = new Blob([configGraph], {type: contentType});
-      this.triggerDownload(blob, `config.${mime.getExtension(contentType)}`)
+      this.triggerDownload(blob, `config.${SUPPPORTED_CONTENT_TYPES.N3}`)
     })
   }
 
-  async getConentTypeFromZip(file: Blob) {
+  async getContentTypeFromZip(file: Blob) {
     const zip = new JSZip();
     const content = await zip.loadAsync(file);
     const contentTypesFile = content.files['[Content_Types].xml'];
