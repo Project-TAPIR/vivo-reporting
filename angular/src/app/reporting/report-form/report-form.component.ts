@@ -11,6 +11,7 @@ import {StepperDataService} from '../services/stepper-data.service';
 import {Construct} from "../models/construct";
 import {Select} from "../models/select";
 import {STEPPER_GLOBAL_OPTIONS} from "@angular/cdk/stepper";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 const CONSTRUCT_INDEX: number = 0;
@@ -54,7 +55,8 @@ export class ReportFormComponent implements OnInit, AfterViewInit {
   constructor(private reportService: ReportService,
               private stepperDataService: StepperDataService,
               private router: Router,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -171,9 +173,21 @@ export class ReportFormComponent implements OnInit, AfterViewInit {
     console.log('this.report', this.report);
     this.reportService.create(this.report)
       .pipe(first())
-      .subscribe(data => {
-        this.router.navigate(['../list'], { relativeTo: this.route});
+      .subscribe({
+        next: () => {
+          this.showSnackBar('Success: Report saved successfully!', 'success');
+          this.router.navigate(['../list'], { relativeTo: this.route });
+        },
+        error: () => {
+          this.showSnackBar('Error: Failed to save the report. Check parameters or update the page and try again', 'error');
+        }
       });
+  }
+
+  public showSnackBar(message: string, type: 'success' | 'error'): void {
+    this.snackBar.open(message, 'Close', {
+      verticalPosition: 'top',
+    });
   }
 
   private changeIcon(index: number) {
