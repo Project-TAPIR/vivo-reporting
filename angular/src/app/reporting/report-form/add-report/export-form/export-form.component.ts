@@ -5,6 +5,11 @@ import {Select} from "../../../models/select";
 import {Construct} from "../../../models/construct";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as XLSX from 'xlsx';
+import {FileUtils} from "../../../utils/FileUtils";
+import {SUPPPORTED_CONTENT_TYPES} from "../../../models/SupportedContentTypes";
+import * as JSZip from "jszip";
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
 
 @Component({
   selector: 'report-export-form',
@@ -20,6 +25,7 @@ export class ExportFormComponent implements OnInit {
   public template: string = '';
   tableHeaders: any = [];
   tableData: any[] = [];
+  templateContent: any = '';
 
   public constructColumns: string[] = ['name', 'description', 'constructQuery'];
   public selectColumns: string[] = ['name', 'description', 'selectQuery', 'construct'];
@@ -59,14 +65,26 @@ export class ExportFormComponent implements OnInit {
     });
   }
 
-  loadTemplateData(templateBase64: string) {
-    const binaryString = atob(templateBase64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+  async loadTemplateData(templateBase64: string) {
+    const blob = FileUtils.base64ToBlob(templateBase64);
+    const contentType = await FileUtils.getContentTypeFromZip(blob);
+    console.log(contentType);
+    if (contentType === SUPPPORTED_CONTENT_TYPES.Xlsx) {
+      this.templateContent = this.loadXlsxTemplate(templateBase64);
+      return;
     }
-    const arrayBuffer = bytes.buffer;
+    if (contentType === SUPPPORTED_CONTENT_TYPES.Docx) {
+      this.templateContent = await this.loadDocxTemplate(templateBase64);
+      return;
+    }
+    else {
+      this.templateContent = "Unknown template format found";
+      return;
+    }
+  }
+
+  loadXlsxTemplate(xlsxTemplate: string): any[] {
+    const arrayBuffer = FileUtils.base64ToArrayBuffer(xlsxTemplate);
 
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
     const firstSheetName = workbook.SheetNames[0];
@@ -74,6 +92,16 @@ export class ExportFormComponent implements OnInit {
     const jsonSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
     this.tableHeaders = jsonSheet[0];
-    this.tableData = jsonSheet.slice(1);
+    return this.tableHeaders.join(", ");
   }
+
+  async loadDocxTemplate(docxTemplate: string) {
+    const arrayBuffer = FileUtils.base64ToArrayBuffer(docxTemplate);
+    const zip = new PizZip(arrayBuffer);
+
+    const doc = new Docxtemplater(zip);
+
+    return doc.getFullText();
+  }
+
 }

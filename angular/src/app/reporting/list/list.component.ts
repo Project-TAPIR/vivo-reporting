@@ -12,6 +12,7 @@ import * as JSZip from "jszip";
 import mime from 'mime';
 import {SUPPPORTED_CONTENT_TYPES} from "../models/SupportedContentTypes";
 import {Router} from "@angular/router";
+import {FileUtils} from "../utils/FileUtils";
 
 interface ApiResponse {
   reports: UpdReport[];
@@ -123,8 +124,8 @@ export class ListComponent implements OnInit, AfterViewInit {
   async downloadReport(resourceId: string) {
     this.reportService.execute(resourceId).subscribe(async (response) => {
       const base64Data = response.report;
-      const blob = this.base64ToBlob(base64Data);
-      const contentType = await this.getContentTypeFromZip(blob);
+      const blob = FileUtils.base64ToBlob(base64Data);
+      const contentType = await FileUtils.getContentTypeFromZip(blob);
       this.triggerDownload(blob, `report.${contentType}`)
     });
   }
@@ -138,38 +139,6 @@ export class ListComponent implements OnInit, AfterViewInit {
     })
   }
 
-  async getContentTypeFromZip(file: Blob) {
-    const zip = new JSZip();
-    const content = await zip.loadAsync(file);
-    const contentTypesFile = content.files['[Content_Types].xml'];
-    const xmlText = await contentTypesFile.async('text');
-    if (xmlText.includes(mime.getType(SUPPPORTED_CONTENT_TYPES.Docx) as string)) {
-      return SUPPPORTED_CONTENT_TYPES.Docx;
-    }
-    if (xmlText.includes(mime.getType(SUPPPORTED_CONTENT_TYPES.Xlsx) as string)) {
-      return SUPPPORTED_CONTENT_TYPES.Xlsx;
-    }
-    else return SUPPPORTED_CONTENT_TYPES.Zip;
-  }
-
-  base64ToBlob(base64: string) {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    return new Blob(byteArrays);
-  }
 
   triggerDownload(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
