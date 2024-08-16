@@ -2,61 +2,110 @@
   <app-menu></app-menu>
   <div class="content">
     <mat-sidenav-container class="example-container">
-  <mat-sidenav-content>
-    <div class="select-list mat-table">
-      <table mat-table [dataSource]="dataSource">
-        <ng-container matColumnDef="id">
-          <tr><th mat-header-cell *matHeaderCellDef>Id</th></tr>
-          <tr>
-            <td *matCellDef="let element">{{element.id}}</td>
-          </tr>
-        </ng-container>
+      <mat-sidenav-content>
+        <div class="select-list mat-table">
+          <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="id">
+              <tr>
+                <th mat-header-cell *matHeaderCellDef>Id</th>
+              </tr>
+              <tr>
+                <td *matCellDef="let element">{{ element.id }}</td>
+              </tr>
+            </ng-container>
 
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
-          <td mat-cell *matCellDef="let element">{{element.name.value}}</td>
-        </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.name.value }}
+              </td>
+            </ng-container>
 
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>Description</th>
-          <td mat-cell *matCellDef="let element">{{element.description.value}}</td>
-        </ng-container>
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.description.value }}
+              </td>
+            </ng-container>
 
-        <ng-container matColumnDef="action">
-          <tr><th mat-header-cell *matHeaderCellDef></th></tr>
-          <tr>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="primary" matTooltip="Delete Report" (click)="confirmDelete(element.resource_id.value)">
-                <mat-icon>delete</mat-icon>
+            <ng-container matColumnDef="action">
+              <tr>
+                <th mat-header-cell *matHeaderCellDef></th>
+              </tr>
+              <tr>
+                <td mat-cell *matCellDef="let element">
+                  <!--              <button mat-icon-button color="primary" matTooltip="Edit Report" (click)="editReport(element.resource_id.value)">-->
+                  <!--                <mat-icon>edit</mat-icon>-->
+                  <!--              </button>-->
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Delete Report"
+                    (click)="confirmDelete(element.resource_id.value)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Download Report"
+                    (click)="downloadReport(element.resource_id.value)"
+                  >
+                    <mat-icon>download</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Download Config"
+                    (click)="downloadConfig(element.resource_id.value)"
+                  >
+                    <mat-icon>subject</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [ngClass]="{ highlight: selectedRowIndex == row.name }"
+              (click)="highlight(row)"
+            ></tr>
+          </table>
+          <br />
+          <div class="button-container">
+            <mat-menu #reportMenu="matMenu">
+              <button mat-menu-item (click)="startReport()">
+                Add report with construct
               </button>
-              <button mat-icon-button color="primary" matTooltip="Download Report" (click)="downloadReport(element.resource_id.value)">
-                <mat-icon>download</mat-icon>
+              <button mat-menu-item (click)="startReportWithoutConstruct()">
+                Add report with only select
               </button>
-              <button mat-icon-button color="primary" matTooltip="Download Config" (click)="downloadConfig(element.resource_id.value)">
-                <mat-icon>subject</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"
-            [ngClass]="{'highlight': selectedRowIndex == row.name}"
-            (click)="highlight(row)"></tr>
-
-      </table>
-      <br>
-      <div class="button-container">
-        <mat-menu #reportMenu="matMenu">
-          <button mat-menu-item (click)="startReport()">Add report with construct</button>
-          <button mat-menu-item (click)="startReportWithoutConstruct()">Add report with only select</button>
-        </mat-menu>
-        <button mat-raised-button color="primary" [matMenuTriggerFor]="reportMenu" >New report</button>
-        <button mat-raised-button color="primary" (click)="fileInput.click()">Import config</button>
-      </div>
-      <input type="file" style="display: none" #fileInput (change)="onFileSelected($event)">
-    </div>
-  </mat-sidenav-content>
-  </mat-sidenav-container>
-</div>
+            </mat-menu>
+            <button
+              mat-raised-button
+              color="primary"
+              [matMenuTriggerFor]="reportMenu"
+            >
+              New report
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="fileInput.click()"
+            >
+              Import config
+            </button>
+          </div>
+          <input
+            type="file"
+            style="display: none"
+            #fileInput
+            (change)="onFileSelected($event)"
+          />
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
 </div>

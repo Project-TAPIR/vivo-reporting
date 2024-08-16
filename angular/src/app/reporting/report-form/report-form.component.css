@@ -1,25 +1,53 @@
-.mat-horizontal-stepper-header {
-    pointer-events: none !important;
-  }
-
 .grid-container {
   display: grid;
   grid-template-columns: 140px auto;
   height: 100vh;
+  overflow: hidden;
 }
 
 .content {
   padding: 24px;
-  height: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  background-color: white;
   align-items: center;
+  background-color: white;
+  height: 100%;
+  overflow: hidden;
 }
 
 .example-container {
   flex-grow: 1;
-  min-width: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
   background-color: white;
+}
+
+.mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mat-horizontal-stepper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+}
+
+.stepper-navigation {
+  margin-top: 16px;
+  display: flex;
+  justify-content: start;
+}
+
+.mat-horizontal-stepper-header {
+  pointer-events: none !important;
 }

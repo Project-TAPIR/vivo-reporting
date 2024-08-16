@@ -5,24 +5,34 @@
         <mat-card-title>Report Details</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-form-field class="form-field">
-          <mat-label>Name</mat-label>
-          <input formControlName="name" matInput placeholder="Enter name of data" />
-        </mat-form-field>
+        <div>
+          <mat-form-field class="form-field">
+            <mat-label>Name</mat-label>
+            <input
+              formControlName="name"
+              matInput
+              placeholder="Enter name of data"
+            />
+          </mat-form-field>
+        </div>
 
-        <mat-form-field class="form-field">
-          <mat-label>Description</mat-label>
-          <input formControlName="description" matInput placeholder="Enter description of data" />
-        </mat-form-field>
+        <div>
+          <mat-form-field class="form-field">
+            <mat-label>Description</mat-label>
+            <input
+              formControlName="description"
+              matInput
+              placeholder="Enter description of data"
+            />
+          </mat-form-field>
+        </div>
       </mat-card-content>
     </mat-card>
 
-    <mat-accordion>
+    <mat-accordion class="mat-accordion">
       <mat-expansion-panel *ngIf="constructQueries.length > 0">
         <mat-expansion-panel-header>
-          <mat-panel-title>
-            Construct Queries
-          </mat-panel-title>
+          <mat-panel-title> Construct Queries </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-card-content class="mat-expansion-panel-content">
           <mat-table [dataSource]="constructQueries">
@@ -33,15 +43,23 @@
 
             <ng-container matColumnDef="description">
               <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+              <mat-cell *matCellDef="let element">{{
+                element.description
+              }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="constructQuery">
-              <mat-header-cell *matHeaderCellDef>Construct Query</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.constructQuery }}</mat-cell>
+              <mat-header-cell *matHeaderCellDef
+                >Construct Query</mat-header-cell
+              >
+              <mat-cell *matCellDef="let element">{{
+                element.constructQuery
+              }}</mat-cell>
             </ng-container>
 
-            <mat-header-row *matHeaderRowDef="constructColumns"></mat-header-row>
+            <mat-header-row
+              *matHeaderRowDef="constructColumns"
+            ></mat-header-row>
             <mat-row *matRowDef="let row; columns: constructColumns"></mat-row>
           </mat-table>
         </mat-card-content>
@@ -49,9 +67,7 @@
 
       <mat-expansion-panel *ngIf="selectQueries.length > 0">
         <mat-expansion-panel-header>
-          <mat-panel-title>
-            Select Queries
-          </mat-panel-title>
+          <mat-panel-title> Select Queries </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-card-content class="mat-expansion-panel-content">
           <mat-table [dataSource]="selectQueries">
@@ -62,16 +78,22 @@
 
             <ng-container matColumnDef="description">
               <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+              <mat-cell *matCellDef="let element">{{
+                element.description
+              }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="selectQuery">
               <mat-header-cell *matHeaderCellDef>Select Query</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.selectQuery }}</mat-cell>
+              <mat-cell *matCellDef="let element">{{
+                element.selectQuery
+              }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="construct" *ngIf="showGraph">
-              <mat-header-cell *matHeaderCellDef>Related Construct</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef
+                >Related Construct</mat-header-cell
+              >
               <mat-cell *matCellDef="let element">{{ element.graph }}</mat-cell>
             </ng-container>
 
@@ -83,15 +105,12 @@
 
       <mat-expansion-panel *ngIf="template">
         <mat-expansion-panel-header>
-          <mat-panel-title>
-            Template Content
-          </mat-panel-title>
+          <mat-panel-title> Template Content </mat-panel-title>
         </mat-expansion-panel-header>
-        <mat-card-content>
+        <mat-card-content class="template">
           <pre>{{ templateContent }}</pre>
         </mat-card-content>
       </mat-expansion-panel>
-
     </mat-accordion>
   </form>
 </div>

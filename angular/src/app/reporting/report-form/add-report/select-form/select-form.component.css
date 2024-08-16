@@ -23,14 +23,10 @@
 }
 
 .form-container {
-  max-width: 800px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
 .form-field {
   width: 100%;
 }
@@ -38,9 +34,4 @@
 .form-group {
   margin-bottom: 20px;
 }
-
-.form-field {
-  width: 100%;
-}
-
 

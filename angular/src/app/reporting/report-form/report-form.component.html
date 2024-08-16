@@ -1,30 +1,58 @@
 <div class="grid-container">
-    <app-menu></app-menu>
-    <div class="content">
-      <mat-sidenav-container class="example-container">
-        <mat-sidenav-content>
+  <app-menu></app-menu>
+  <div class="content">
+    <mat-sidenav-container class="example-container">
+      <mat-sidenav-content>
+        <mat-horizontal-stepper
+          #stepper
+          (selectionChange)="onStepChange($event)"
+          (click)="triggerClick()"
+          linear="true"
+        >
+          <mat-step
+            label="Model definition"
+            errorMessage="Required"
+            *ngIf="includeConstructStep"
+          >
+            <report-construct-form
+              (toggleControler)="hideStepperButtons($event)"
+            ></report-construct-form>
+            <div class="stepper-navigation" *ngIf="this.isButtonVisible">
+              <button mat-stroked-button color="primary" matStepperNext>
+                Next
+              </button>
+            </div>
+          </mat-step>
 
-        <mat-horizontal-stepper #stepper (selectionChange)="onStepChange($event)" (click)="triggerClick()">
-          <mat-step label="Model definition" errorMessage="Required" *ngIf="includeConstructStep">
-            <report-construct-form (toggleControler)="hideStepperButtons($event)"></report-construct-form>
-            <div class="stepper-navigation" *ngIf="this.isButtonVisible">
-              <button mat-stroked-button color="primary" matStepperNext>Next</button>
-            </div>
-          </mat-step>
           <mat-step label="Select from model">
-            <report-select-form [showGraph]="includeConstructStep" (toggleControler)="hideStepperButtons($event)"></report-select-form>
+            <report-select-form
+              [showGraph]="includeConstructStep"
+              (toggleControler)="hideStepperButtons($event)"
+            ></report-select-form>
             <div class="stepper-navigation" *ngIf="this.isButtonVisible">
-              <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
-              <button mat-stroked-button color="primary" matStepperNext>Next</button>
+              <button mat-stroked-button color="primary" matStepperPrevious>
+                Back
+              </button>
+              <button mat-stroked-button color="primary" matStepperNext>
+                Next
+              </button>
             </div>
           </mat-step>
+
           <mat-step label="Reporting template">
-            <report-template-form (templateAdded)="handleTemplateAdded($event)"></report-template-form>
+            <report-template-form
+              (templateAdded)="handleTemplateAdded($event)"
+            ></report-template-form>
             <div class="stepper-navigation">
-              <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
-              <button mat-stroked-button color="primary" matStepperNext>Next</button>
+              <button mat-stroked-button color="primary" matStepperPrevious>
+                Back
+              </button>
+              <button mat-stroked-button color="primary" matStepperNext>
+                Next
+              </button>
             </div>
           </mat-step>
+
           <mat-step label="Export">
             <report-export-form
               [showGraph]="includeConstructStep"
@@ -32,18 +60,13 @@
               (reportDescriptionChange)="updateReportDescription($event)"
             ></report-export-form>
             <div class="stepper-navigation">
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="saveReport()"
-              >
+              <button mat-raised-button color="primary" (click)="saveReport()">
                 Save report
               </button>
             </div>
           </mat-step>
         </mat-horizontal-stepper>
-
-        </mat-sidenav-content>
-      </mat-sidenav-container>
-    </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
 </div>
